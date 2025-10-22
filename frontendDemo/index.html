@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>上传简历</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: #f9fafb;
+            color: #111827;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .grid {
+            width: 100%;
+            max-width: 80rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        @media (min-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .left-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .title-section h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .title-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .info-box {
+            padding: 1rem;
+            background-color: f9fafb;
+        }
+
+        .info-box p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .illustration {
+            position: relative;
+        }
+
+        .illustration img {
+            width: 100%;
+            border-radius: 0.5rem;
+
+        }
+
+        .upload-card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .upload-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .upload-area {
+            position: relative;
+            border: 2px dashed #60a5fa;
+            border-radius: 0.75rem;
+            padding: 3rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            background-color: rgba(219, 234, 254, 0.3);
+        }
+
+        .upload-area.dragging {
+            border-color: #3b82f6;
+            background-color: #dbeafe;
+        }
+
+        .upload-area input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .upload-icon {
+            width: 3rem;
+            height: 3rem;
+            color: #2563eb;
+        }
+
+        .upload-text {
+            font-size: 0.875rem;
+            color: #6b7280;
+            text-align: center;
+            line-height: 1.6;
+            max-width: 20rem;
+        }
+
+        .file-info {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .file-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #2563eb;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .button {
+            flex: 1;
+            height: 3rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+            border: none;
+        }
+
+        .button-outline {
+            background-color: #bfdbfe;
+            color: #374151;
+        }
+
+        .button-outline:hover {
+            background-color: #93c5fd;
+        }
+
+        .button-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .button-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .progress-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding-top: 1rem;
+        }
+
+        .step {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .step.completed {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .step.current {
+            background-color: #2563eb;
+            color: white;
+            font-weight: 600;
+        }
+
+        .connector {
+            width: 8rem;
+            height: 0.125rem;
+            background-color: #2563eb;
+            margin: 0 -0.0625rem;
+        }
+
+        .check-icon {
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid">
+            <!-- 左侧部分 -->
+            <div class="left-section">
+                <div class="title-section">
+                    <h1>finish!</h1>
+                    <h2>Upload your resume</h2>
+                </div>
+
+                <div class="info-box">
+                    <p>Upload your resume, the platform will help you parse and optimize, you can also skip this step</p>
+                </div>
+
+                <!-- 插图 -->
+                <div class="illustration">
+                    <img src="images/f3b98a45b95147719af263d1e992460c384c379e.png" alt="Illustration">
+                </div>
+            </div>
+
+            <!-- 右侧部分 - 上传卡片 -->
+            <div class="upload-card">
+                <h3>Upload file</h3>
+
+                <!-- 上传区域 -->
+                <div id="uploadArea" class="upload-area">
+                    <input type="file" id="fileInput" accept=".pdf,.doc,.docx">
+                    <div class="upload-content">
+                        <!-- 上传图标SVG -->
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                        <p class="upload-text">Drag your resume file to this area, or click on the area to select the appropriate file to upload</p>
+                    </div>
+                    <div id="fileInfo" class="file-info" style="display: none;">
+                        <p class="file-name" id="fileName"></p>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="button-group">
+                    <button class="button button-outline">Last step</button>
+                    <button class="button button-primary">finish</button>
+                </div>
+
+                <!-- 进度指示器 -->
+                <div class="progress-container">
+                    <div class="step completed">
+                        <i class="fas fa-check check-icon"></i>
+                    </div>
+                    <div class="connector"></div>
+                    <div class="step completed">
+                        <i class="fas fa-check check-icon"></i>
+                    </div>
+                    <div class="connector"></div>
+                    <div class="step current">3</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+
+            // 处理拖拽事件
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragging');
+            });
+
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.classList.remove('dragging');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragging');
+                
+                const droppedFile = e.dataTransfer.files[0];
+                if (droppedFile) {
+                    handleFile(droppedFile);
+                }
+            });
+
+            // 处理文件选择
+            fileInput.addEventListener('change', function(e) {
+                const selectedFile = e.target.files[0];
+                if (selectedFile) {
+                    handleFile(selectedFile);
+                }
+            });
+
+            // 处理文件
+            function handleFile(file) {
+                // 检查文件类型
+                const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                
+                if (!validTypes.includes(file.type)) {
+                    alert('请上传PDF、DOC或DOCX格式的文件');
+                    return;
+                }
+
+                // 显示文件信息
+                fileName.textContent = `已选择: ${file.name}`;
+                fileInfo.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
